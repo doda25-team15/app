@@ -1,3 +1,6 @@
+#FROM maven:3.9.6-eclipse-temurin-25 AS build
+#WORKDIR /app
+
 FROM eclipse-temurin:25-jdk AS build
 WORKDIR /app
 
@@ -13,7 +16,6 @@ FROM eclipse-temurin:25-jre
 WORKDIR /app
 
 COPY --from=build /app/target/*.jar app.jar
-
 
 ENV MODEL_HOST=http://localhost:8080
 
