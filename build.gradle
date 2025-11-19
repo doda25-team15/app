@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version "${spring_boot_version}"
+    id 'io.spring.dependency-management' version "${spring_dependency_management_version}"
+}
+
+base {
+    archivesName = project.archives_base_name
+    version = project.app_version
+    group = project.maven_group
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'GitHub Packages Registry'
+        url = 'https://maven.pkg.github.com/doda25-team15/lib-version'
+        credentials {
+            username = System.getenv("GITHUB_ACTOR")
+            password = System.getenv("GITHUB_TOKEN")
+        }
+    }
+    mavenLocal() // fallback to maven local when GitHub auth is unavailable
+}
+
+dependencies {
+    // implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    implementation "nl.tudelft:libversion:${project.libversion_version}"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
