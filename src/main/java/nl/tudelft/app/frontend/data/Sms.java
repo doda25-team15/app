@@ -1,4 +1,4 @@
-package frontend.data;
+package nl.tudelft.app.frontend.data;
 
 public class Sms {
     public String classifier;
