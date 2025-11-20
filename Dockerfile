@@ -1,22 +1,28 @@
-
 FROM eclipse-temurin:25-jdk AS build
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y maven
-
-COPY pom.xml .
+COPY gradlew .
+COPY gradle ./gradle
+COPY build.gradle gradle.properties ./
 COPY src ./src
 
-# build app. clean - cleans dir, package - creates artifact, DskipTests - skips test (not sure if it actually skips it)
-RUN mvn -q clean package -DskipTests 
+RUN chmod +x ./gradlew
 
-FROM eclipse-temurin:25-jre
+ARG GITHUB_ACTOR
+ARG GITHUB_TOKEN
+ENV GITHUB_ACTOR=${GITHUB_ACTOR}
+ENV GITHUB_TOKEN=${GITHUB_TOKEN}
+
+ENV MODEL_HOST="http://localhost:8081"
+RUN ./gradlew clean build -x test --no-daemon
+
+
+FROM eclipse-temurin:25-jdk
 WORKDIR /app
 
-COPY --from=build /app/target/*.jar app.jar
+ENV MODEL_HOST="http://localhost:8081"
 
-ENV MODEL_HOST=http://localhost:8081
+COPY --from=build /app/build/libs/*.jar app.jar
 
 EXPOSE 8080
-
 ENTRYPOINT ["java", "-jar", "app.jar"]
