@@ -17,6 +17,6 @@ COPY --from=build /app/target/*.jar app.jar
 
 ENV MODEL_HOST=http://localhost:8081
 
-EXPOSE 8081
+EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
