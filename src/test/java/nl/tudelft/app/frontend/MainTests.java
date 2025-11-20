@@ -1,4 +1,4 @@
-package frontend;
+package nl.tudelft.app.frontend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
