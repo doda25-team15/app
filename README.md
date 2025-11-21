@@ -21,9 +21,25 @@ $env:MODEL_HOST="http://localhost:8081"; ./gradlew bootRun
 
 The server runs on port 8080. Once its startup has finished, you can access [localhost:8080/sms](http://localhost:8080/sms) in your browser to interact with the application.
 
-build dockerfile using docker build \
+## Setting up locally with Docker
+
+The docker image can be built with:
+
+```shell
+docker build \
   --build-arg GITHUB_ACTOR= username \
   --build-arg GITHUB_TOKEN= personal_access_token \
   -t spring-app .
+```
 
+The docker container can be started with:
 
+```shell
+docker run \
+-e PORT=8080 \
+-e MODEL_HOST="http://host.docker.internal:8081" \
+-p 8080:8080 \
+spring-app
+```
+
+The port for the app can be changed by modifying the `PORT` environment variable and the `-p` argument accordingly. The `MODEL_HOST` variable should point to where the backend is running.
