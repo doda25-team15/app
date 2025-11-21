@@ -16,13 +16,13 @@ ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 ENV MODEL_HOST="http://localhost:8081"
 RUN ./gradlew clean build -x test --no-daemon
 
-
 FROM eclipse-temurin:25-jdk
 WORKDIR /app
 
 ENV MODEL_HOST="http://localhost:8081"
+ENV PORT=8080
 
 COPY --from=build /app/build/libs/*.jar app.jar
 
-EXPOSE 8080
+EXPOSE ${PORT}
 ENTRYPOINT ["java", "-jar", "app.jar"]
