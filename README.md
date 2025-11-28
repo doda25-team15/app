@@ -10,13 +10,13 @@ You must specify the environment variable `MODEL_HOST` to define where the backe
 The frontend service can be started through running the `Main` class (e.g., in your IDE) or through Maven (recommended):
 
 ```shell
-MODEL_HOST="http://localhost:8081" ./gradlew bootRun
+MODEL_HOST="http://localhost:8081" ./mvnw spring-boot:run
 ```
 
 Or on Windows:
 
 ```shell
-$env:MODEL_HOST="http://localhost:8081"; ./gradlew bootRun
+$env:MODEL_HOST="http://localhost:8081"; ./mvnw spring-boot:run
 ```
 
 The server runs on port 8080. Once its startup has finished, you can access [localhost:8080/sms](http://localhost:8080/sms) in your browser to interact with the application.
