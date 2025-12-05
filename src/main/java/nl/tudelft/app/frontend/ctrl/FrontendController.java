@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.tudelft.app.frontend.data.Sms;
 import jakarta.servlet.http.HttpServletRequest;
+import nl.tudelft.app.frontend.metrics.*;
+import io.prometheus.client.Histogram;
 
 @Controller
 @RequestMapping(path = "/sms")
@@ -60,11 +62,29 @@ public class FrontendController {
     @PostMapping({ "", "/" })
     @ResponseBody
     public Sms predict(@RequestBody Sms sms) {
-        System.out.printf("Requesting prediction for \"%s\" ...\n", sms.sms);
-        sms.result = getPrediction(sms);
-        System.out.printf("Prediction: %s\n", sms.result);
-        return sms;
+        SmsMetrics.inflightRequests.inc();
+
+        Histogram.Timer timer = SmsMetrics.smsLatencySeconds
+                .labels("/sms")               // endpoint label
+                .startTimer();
+
+        try {
+            System.out.printf("Requesting prediction for \"%s\" ...\n", sms.sms);
+            sms.result = getPrediction(sms);
+            if (sms.result != null) {
+                SmsMetrics.smsRequestsTotal.labels(sms.result.toLowerCase()).inc();
+            }
+
+            System.out.printf("Prediction: %s\n", sms.result);
+            return sms;
+
+        } finally {
+            // 4) record latency and decrement gauge
+            timer.observeDuration();
+            SmsMetrics.inflightRequests.dec();
+        }
     }
+
 
     private String getPrediction(Sms sms) {
         try {
