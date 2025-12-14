@@ -1,5 +1,6 @@
 package nl.tudelft.app.frontend.metrics;
 
+import io.prometheus.client.Collector.MetricFamilySamples;
 import io.prometheus.client.exporter.common.TextFormat;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +19,7 @@ public class MetricsController {
     @GetMapping(value = "/metrics", produces = MediaType.TEXT_PLAIN_VALUE)
     public String metrics() throws IOException {
         Writer writer = new StringWriter();
-        Enumeration<io.prometheus.client.Collector.MetricFamilySamples> mfs =
-                REGISTRY.metricFamilySamples();
+        Enumeration<MetricFamilySamples> mfs = REGISTRY.metricFamilySamples();
         TextFormat.write004(writer, mfs);
         return writer.toString();
     }
