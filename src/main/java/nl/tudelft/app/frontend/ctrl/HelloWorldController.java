@@ -10,6 +10,6 @@ public class HelloWorldController {
     @GetMapping("/")
     @ResponseBody
     public String index() {
-        return "Hello World!";
+        return "Hello World! testing canary";
     }
 }
