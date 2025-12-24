@@ -1,9 +1,9 @@
 package nl.tudelft.app.frontend.metrics;
 
+import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
 import io.prometheus.client.Histogram;
-import io.prometheus.client.CollectorRegistry;
 
 public class SmsMetrics {
 
