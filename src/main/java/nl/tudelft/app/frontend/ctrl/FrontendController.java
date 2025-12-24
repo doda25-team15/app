@@ -1,8 +1,9 @@
 package nl.tudelft.app.frontend.ctrl;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
+import io.prometheus.client.Histogram;
+import jakarta.servlet.http.HttpServletRequest;
+import nl.tudelft.app.frontend.data.Sms;
+import nl.tudelft.app.frontend.metrics.SmsMetrics;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
@@ -13,10 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import nl.tudelft.app.frontend.data.Sms;
-import jakarta.servlet.http.HttpServletRequest;
-import nl.tudelft.app.frontend.metrics.*;
-import io.prometheus.client.Histogram;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @Controller
 @RequestMapping(path = "/sms")
