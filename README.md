@@ -26,10 +26,16 @@ The server runs on port 8080. Once its startup has finished, you can access [loc
 The docker image can be built with:
 
 ```shell
-docker build \
-  --build-arg GITHUB_ACTOR= username \
-  --build-arg GITHUB_TOKEN= personal_access_token \
-  -t spring-app .
+docker buildx build \
+  --secret id=github_token,env=GITHUB_TOKEN \
+  -t spring-app \
+  .
+```
+
+OR
+
+```shell
+docker buildx build --platform linux/amd64,linux/arm64 .
 ```
 
 The docker container can be started with:
