@@ -23,14 +23,19 @@ The server runs on port 8080. Once its startup has finished, you can access [loc
 
 ## Setting up locally with Docker
 
+Compile the application using maven:
+
+```shell
+./mvnw clean package -DskipTests
+```
+
 The docker image can be built with:
 
 ```shell
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
   --secret id=github_token,env=GITHUB_TOKEN \
-  -t spring-app \
-  .
+  -t spring-app .
 ```
 
 The docker container can be started with:
