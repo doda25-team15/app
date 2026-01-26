@@ -23,16 +23,52 @@ The server runs on port 8080. Once its startup has finished, you can access [loc
 
 ## Setting up locally with Docker
 
-The docker image can be built with:
+The application depends on `lib-version`, which is published to GitHub Packages.
+Accessing GitHub Packages requires authentication.
+
+**Step 1: Create GitHub Personal Access Token (PAT)**
+
+1. Go to [GitHub Settings → Tokens](https://github.com/settings/tokens)
+2. Click **"Generate new token (classic)"**
+3. Configure token and set the required scope as `read:packages`
+4. Click **"Generate token"**
+5. **Copy the token** and save it in your system
+
+
+**Step 2: Configure Maven Credentials**
+
+Create or edit `~/.m2/settings.xml` in your local system:
+
+```xml
+<settings>
+  <servers>
+    <server>
+      <id>github-packages</id>
+      <username>GITHUB_USERNAME</username>
+      <password>GITHUB_TOKEN</password>
+    </server>
+  </servers>
+</settings>
+```
+
+Replace `GITHUB_USERNAME` with your Github username and `GITHUB_TOKEN` with the token you created in the previous step.
+
+**Step 3: Compile the application using maven**
 
 ```shell
-docker build \
-  --build-arg GITHUB_ACTOR= username \
-  --build-arg GITHUB_TOKEN= personal_access_token \
+./mvnw clean package -DskipTests
+```
+
+**Step 4: Build docker image**
+
+```shell
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  --secret id=github_token,env=GITHUB_TOKEN \
   -t spring-app .
 ```
 
-The docker container can be started with:
+**Step 5: Start docker container**
 
 ```shell
 docker run \
