@@ -11,7 +11,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Enumeration;
 
-import static nl.tudelft.app.frontend.metrics.SmsMetrics.REGISTRY;
+import static nl.tudelft.app.frontend.metrics.SmsMetrics.*;
 
 @RestController
 public class MetricsController {
