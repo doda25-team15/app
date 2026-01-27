@@ -1,6 +1,5 @@
 package nl.tudelft.app.frontend.ctrl;
 
-import io.prometheus.client.Histogram;
 import jakarta.servlet.http.HttpServletRequest;
 import nl.tudelft.app.frontend.data.Sms;
 import nl.tudelft.app.frontend.metrics.SmsMetrics;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 @RequestMapping(path = "/sms")
@@ -61,26 +61,25 @@ public class FrontendController {
     @PostMapping({ "", "/" })
     @ResponseBody
     public Sms predict(@RequestBody Sms sms) {
-        SmsMetrics.inflightRequests.inc();
+        SmsMetrics.inflightRequests++;
 
-        Histogram.Timer timer = SmsMetrics.smsLatencySeconds
-                .labels("/sms")               // endpoint label
-                .startTimer();
+        long startTime = System.nanoTime();
 
         try {
             System.out.printf("Requesting prediction for \"%s\" ...\n", sms.sms);
             sms.result = getPrediction(sms);
             if (sms.result != null) {
-                SmsMetrics.smsRequestsTotal.labels(sms.result.toLowerCase()).inc();
+                SmsMetrics.addSmsRequest(sms.result.toLowerCase());
             }
 
             System.out.printf("Prediction: %s\n", sms.result);
             return sms;
 
         } finally {
-            // 4) record latency and decrement gauge
-            timer.observeDuration();
-            SmsMetrics.inflightRequests.dec();
+            long endTime = System.nanoTime();
+            double elapsedSeconds = (endTime - startTime) / (double) TimeUnit.SECONDS.toNanos(1);
+            SmsMetrics.addLatencyValue(elapsedSeconds);
+            SmsMetrics.inflightRequests--;
         }
     }
 
