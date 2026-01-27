@@ -33,10 +33,10 @@ public class MetricsController {
         String smsLatencySecondsStr = IntStream.range(0, BUCKETS.size())
             .mapToObj(i -> {
                 double bucket = BUCKETS.get(i);
-                double value = smsLatencySeconds[i];
+                double value = smsLatencySeconds[i].sum();
                 return String.format("sms_request_latency_seconds_bucket{endpoint=\"/sms\",le=\"%s\",} %s", bucket, value);
             })
             .collect(Collectors.joining("\n"));
-        return RESPONSE_FORMAT.formatted(smsRequestsTotalHam, smsRequestsTotalSpam, inflightRequests, smsLatencySecondsStr, smsLatencySecondsCount, smsLatencySecondsCount, smsLatencySecondsSum);
+        return RESPONSE_FORMAT.formatted(smsRequestsTotalHam.sum(), smsRequestsTotalSpam.sum(), inflightRequests.sum(), smsLatencySecondsStr, smsLatencySecondsCount.sum(), smsLatencySecondsCount.sum(), smsLatencySecondsSum.sum());
     }
 }
