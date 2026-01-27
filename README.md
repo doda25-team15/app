@@ -21,6 +21,12 @@ $env:MODEL_HOST="http://localhost:8081"; ./mvnw spring-boot:run
 
 The server runs on port 8080. Once its startup has finished, you can access [localhost:8080/sms](http://localhost:8080/sms) in your browser to interact with the application.
 
+You can view what version of lib-version is currently used in the application by visiting the `/libversion` endpoint. For example:
+
+```json
+{"version":"1.0.7","branch":"main","shortCommitHash":"238e48a","commitHash":"238e48a2c4172c27ab452109644eddfe44c66ff2"}
+```
+
 ## Setting up locally with Docker
 
 The application depends on `lib-version`, which is published to GitHub Packages.
