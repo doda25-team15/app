@@ -61,7 +61,7 @@ public class FrontendController {
     @PostMapping({ "", "/" })
     @ResponseBody
     public Sms predict(@RequestBody Sms sms) {
-        SmsMetrics.inflightRequests++;
+        SmsMetrics.inflightRequests.add(1);
 
         long startTime = System.nanoTime();
 
@@ -79,7 +79,7 @@ public class FrontendController {
             long endTime = System.nanoTime();
             double elapsedSeconds = (endTime - startTime) / (double) TimeUnit.SECONDS.toNanos(1);
             SmsMetrics.addLatencyValue(elapsedSeconds);
-            SmsMetrics.inflightRequests--;
+            SmsMetrics.inflightRequests.add(-1);
         }
     }
 
