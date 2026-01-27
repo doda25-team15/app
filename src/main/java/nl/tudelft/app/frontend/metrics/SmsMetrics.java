@@ -1,31 +1,42 @@
 package nl.tudelft.app.frontend.metrics;
 
-import io.prometheus.client.CollectorRegistry;
-import io.prometheus.client.Counter;
-import io.prometheus.client.Gauge;
-import io.prometheus.client.Histogram;
+import java.util.List;
 
+// Prometheus uses float64 internally, so use Java doubles
 public class SmsMetrics {
+    // counter
+    public static double smsRequestsTotalHam = 0;
+    public static double smsRequestsTotalSpam = 0;
 
-    public static final CollectorRegistry REGISTRY = new CollectorRegistry();
+    public static void addSmsRequest(String label) {
+        switch (label) {
+            case "ham" -> smsRequestsTotalHam++;
+            case "spam" -> smsRequestsTotalSpam++;
+            default -> throw new IllegalArgumentException("Unknown label '%s'".formatted(label));
+        }
+    }
 
-    public static final Counter smsRequestsTotal = Counter.build()
-            .name("sms_requests_total")
-            .help("Total number of SMS classification requests")
-            .labelNames("result")          // "spam" / "ham"
-            .register(REGISTRY);
+    // gauge
+    public static double inflightRequests = 0;
 
-    public static final Gauge inflightRequests = Gauge.build()
-            .name("sms_requests_inflight")
-            .help("Currently active SMS classification requests")
-            .register(REGISTRY);
+    // histogram
+    // this excludes the +Inf bucket because it always equals smsLatencySecondsCount
+    public static final List<Double> BUCKETS = List.of(0.05d, 0.1d, 0.25d, 0.5d, 1d, 2d, 5d);
 
-    public static final Histogram smsLatencySeconds = Histogram.build()
-            .name("sms_request_latency_seconds")
-            .help("Latency for SMS classification requests")
-            .labelNames("endpoint")        // e.g. "/sms"
-            .buckets(0.05, 0.1, 0.25, 0.5, 1, 2, 5)
-            .register(REGISTRY);
+    public static final double[] smsLatencySeconds = new double[BUCKETS.size()];
+    public static double smsLatencySecondsCount = 0;
+    public static double smsLatencySecondsSum = 0;
+
+    public static void addLatencyValue(double latencySeconds) {
+        smsLatencySecondsCount++;
+        smsLatencySecondsSum += latencySeconds;
+        for (int i = 0; i < BUCKETS.size(); i++) {
+            double bucket = BUCKETS.get(i);
+            if (latencySeconds < bucket) {
+                smsLatencySeconds[i]++;
+            }
+        }
+    }
 
     private SmsMetrics() {}
 }
